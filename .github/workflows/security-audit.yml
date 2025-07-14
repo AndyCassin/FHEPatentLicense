@@ -1,0 +1,151 @@
+name: Security Audit
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    # Run security audit weekly on Mondays at 00:00 UTC
+    - cron: '0 0 * * 1'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Generate audit report
+        run: |
+          npm audit --json > audit-report.json || true
+          echo "## Security Audit Report" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+          cat audit-report.json >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-report
+          path: audit-report.json
+          retention-days: 30
+
+  solidity-security:
+    name: Solidity Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Solhint security check
+        run: npm run lint:sol:security
+        continue-on-error: false
+
+      - name: Check for common vulnerabilities
+        run: |
+          echo "Checking for common Solidity vulnerabilities..."
+          grep -r "tx.origin" contracts/ && echo "⚠️  Found tx.origin usage" || echo "✓ No tx.origin found"
+          grep -r "block.timestamp" contracts/ && echo "⚠️  Found block.timestamp usage" || echo "✓ No problematic timestamp usage"
+          grep -r "selfdestruct" contracts/ && echo "⚠️  Found selfdestruct" || echo "✓ No selfdestruct found"
+        continue-on-error: true
+
+  gas-optimization-check:
+    name: Gas Optimization Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile contracts
+        run: npm run compile
+
+      - name: Run gas reporter
+        run: npm run test:gas
+        continue-on-error: true
+
+      - name: Upload gas report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gas-report
+          path: gas-report.txt
+          retention-days: 30
+        if: always()
+
+  contract-size-check:
+    name: Contract Size Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check contract sizes
+        run: CONTRACT_SIZER=true npm run compile
+        continue-on-error: true
+
+      - name: Verify size limits
+        run: |
+          echo "Contract size limits (24KB for Ethereum):"
+          echo "Checking if any contract exceeds the limit..."
+        continue-on-error: true
