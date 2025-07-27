@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Hardhat files
+cache/
+artifacts/
+deployments/
+simulation-results/
+
+# TypeChain
+typechain/
+typechain-types/
+
+# Coverage
+coverage/
+coverage.json
+.coverage_cache/
+.coverage_contracts/
+
+# Gas reports
+gas-report.txt
+
+# Build files
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test files
+test-results/
+
+# Hardhat network files
+.hardhat/
+
+# Temporary files
+*.tmp
+tmp/
+
+# Deployment sensitive data
+.openzeppelin/
+.secret
+
+# Lock files (keep package-lock.json in production)
+# Uncomment if using yarn exclusively
+# package-lock.json
