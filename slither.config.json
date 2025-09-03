@@ -1,0 +1,14 @@
+{
+  "filter_paths": "node_modules|test|scripts",
+  "exclude_dependencies": true,
+  "exclude_informational": false,
+  "exclude_low": false,
+  "exclude_medium": false,
+  "exclude_high": false,
+  "solc_remaps": [
+    "@openzeppelin=node_modules/@openzeppelin"
+  ],
+  "detectors_to_exclude": "naming-convention,external-function",
+  "printers_to_run": "human-summary,contract-summary",
+  "checklist_limit": 10
+}
