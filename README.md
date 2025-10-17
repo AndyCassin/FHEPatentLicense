@@ -2,6 +2,13 @@
 
 A decentralized patent licensing platform built with Fully Homomorphic Encryption (FHE) using Zama's fhEVM on Ethereum Sepolia. This platform enables confidential patent registration, licensing agreements, royalty payments, and encrypted bidding processes.
 
+
+**Watch the Demo**: [View demonstration video demo.mp4]
+
+## 🚀 Live Application
+
+Access the platform at: **[https://fhe-patent-license.vercel.app/](https://fhe-patent-license.vercel.app/)**
+
 ## Features
 
 - **Confidential Patent Registration**: Register patents with encrypted royalty rates, minimum fees, and exclusivity periods
