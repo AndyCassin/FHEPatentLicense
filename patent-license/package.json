@@ -1,0 +1,34 @@
+{
+  "name": "patent-license-fhevm-example",
+  "version": "1.0.0",
+  "description": "Confidential Patent Licensing Platform using FHEVM SDK",
+  "main": "index.html",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js --network sepolia",
+    "verify": "hardhat run scripts/verify.js --network sepolia",
+    "start": "npx http-server . -p 3001 -o",
+    "dev": "npm start"
+  },
+  "keywords": [
+    "fhevm",
+    "patent",
+    "license",
+    "blockchain",
+    "encryption",
+    "confidential"
+  ],
+  "author": "FHEVM Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@fhevm/sdk": "file:../../packages/fhevm-sdk",
+    "ethers": "^6.9.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0",
+    "dotenv": "^16.3.1",
+    "http-server": "^14.1.1"
+  }
+}
