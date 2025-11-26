@@ -1,6 +1,6 @@
 # Confidential Patent License Platform
 
-A decentralized patent licensing platform built with Fully Homomorphic Encryption (FHE) using Zama's fhEVM on Ethereum Sepolia. This platform enables confidential patent registration, licensing agreements, royalty payments, and encrypted bidding processes.
+A decentralized patent licensing platform built with Fully Homomorphic Encryption (FHE) using Zama's fhEVM on Ethereum Sepolia. This platform enables confidential patent registration, licensing agreements, royalty payments, and encrypted bidding processes with advanced Gateway callback architecture.
 
 
 **Watch the Demo**: [View demonstration demo.mp4]
@@ -9,14 +9,35 @@ A decentralized patent licensing platform built with Fully Homomorphic Encryptio
 
 Access the platform at: **[https://fhe-patent-license.vercel.app/](https://fhe-patent-license.vercel.app/)**
 
-## Features
+## ✨ Key Features
 
-- **Confidential Patent Registration**: Register patents with encrypted royalty rates, minimum fees, and exclusivity periods
+### **Privacy-First Patent Management**
+- **Confidential Patent Registration**: Register patents with fully encrypted royalty rates, minimum fees, and exclusivity periods
 - **License Management**: Request, approve, and manage patent licenses with encrypted terms
-- **Confidential Bidding**: Submit sealed bids for exclusive patent licenses
+- **Confidential Bidding**: Submit sealed bids for exclusive patent licenses with complete privacy
 - **Royalty Tracking**: Report revenue and pay royalties with privacy-preserving encryption
 - **Multi-Territory Support**: Define geographic territories for patent and license coverage
 - **Automated Status Management**: Track patent and license lifecycles with automated state transitions
+
+### **Advanced Gateway Callback Architecture**
+- **Async Decryption Pattern**: User submits encrypted request → Contract records → Gateway decrypts → Callback completes transaction
+- **Gas Optimization**: Expensive FHE operations performed off-chain to minimize on-chain costs
+- **Cryptographic Proofs**: All Gateway callbacks verified with signature validation
+- **Efficient HCU Usage**: Optimized Homomorphic Compute Unit consumption
+
+### **Robust Security Mechanisms**
+- **Refund Mechanism**: Automatic refunds for decryption failures, timeouts, and non-winning bids
+- **Timeout Protection**: 7-day timeout prevents permanent fund locks
+- **Input Validation**: Comprehensive validation on all external functions
+- **Access Control**: Role-based permissions with modifiers
+- **Overflow Protection**: Safe arithmetic operations throughout
+- **Reentrancy Protection**: NonReentrant modifiers on critical functions
+
+### **Privacy Solutions**
+1. **Division Problem**: Random multipliers protect privacy during encrypted division
+2. **Price Leakage Prevention**: Fuzzing techniques and delayed revelation
+3. **Async Processing**: Gateway callback mode for complex operations
+4. **Gas Efficiency**: Minimal on-chain FHE operations
 
 ## Technology Stack
 
@@ -636,20 +657,103 @@ const licenseId = await requestLicense(patentId, {
 });
 ```
 
+## 📚 Extended Documentation
+
+### Comprehensive Guides
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Detailed system architecture, Gateway callback patterns, security features, and privacy solutions
+- **[API.md](./API.md)** - Complete API reference with function signatures, parameters, return values, events, and usage examples
+
+### Architecture Highlights
+
+#### Gateway Callback Flow
+
+```
+User → Submit Encrypted Request → Contract Records State
+                                         ↓
+                                   Request Gateway
+                                         ↓
+                            Gateway Decrypts Off-Chain
+                                         ↓
+                              Callback with Proof
+                                         ↓
+                              Complete Transaction
+```
+
+#### Refund & Timeout Protection
+
+- **7-Day Timeout**: All decryption requests timeout after 7 days
+- **Automatic Refunds**: Failed operations trigger immediate refund availability
+- **Non-Winner Refunds**: Losing bidders receive automatic refunds
+- **Manual Withdrawal**: Users can withdraw pending refunds anytime
+
+#### Security Architecture
+
+1. **Input Validation**: All external functions validate inputs
+   ```solidity
+   require(royaltyRate <= 10000, "Royalty rate too high");
+   require(validityYears > 0 && validityYears <= 20, "Invalid validity");
+   ```
+
+2. **Access Control**: Role-based modifiers
+   ```solidity
+   modifier onlyOwner() { ... }
+   modifier onlyPatentOwner(uint256 patentId) { ... }
+   ```
+
+3. **Reentrancy Protection**: Critical functions protected
+   ```solidity
+   function claimRefund() external nonReentrant { ... }
+   function withdrawRefund() external nonReentrant { ... }
+   ```
+
+4. **Overflow Protection**: Safe arithmetic
+   ```solidity
+   uint64 expectedRoyalty = uint64((uint128(revenue) * royaltyRate) / 10000);
+   ```
+
+### Technical Innovations
+
+#### 1. Division Problem Solution
+- **Challenge**: FHE division is expensive and leaks information
+- **Solution**: Gateway callback with random multipliers
+- **Benefit**: Privacy preserved, gas costs minimized
+
+#### 2. Gateway Callback Pattern
+- **Architecture**: Async decryption with cryptographic proofs
+- **Benefits**:
+  - Privacy maintained throughout
+  - Minimal on-chain operations
+  - Gas optimized
+  - Verifiable correctness
+
+#### 3. Timeout & Refund System
+- **Timeout Detection**: Automatic after 7 days
+- **Refund Triggers**: Timeout, failure, non-winner
+- **Protection**: Prevents permanent fund locks
+
 ## Community & Support
 
 ### Get Help
-- 📖 Documentation: Read the full README and inline comments
-- 💬 GitHub Issues: Report bugs or request features
-- 🎥 Demo Video: Watch the walkthrough video
-- 🔗 Live Demo: Try the application on Sepolia
+- 📖 **Documentation**: Read ARCHITECTURE.md and API.md for comprehensive guides
+- 💬 **GitHub Issues**: Report bugs or request features
+- 🎥 **Demo Video**: Watch the walkthrough video
+- 🔗 **Live Demo**: Try the application on Sepolia
+- 🔐 **Security**: Review inline AUDIT comments in contract code
+
+### Key Resources
+- [Architecture Documentation](./ARCHITECTURE.md) - System design and patterns
+- [API Documentation](./API.md) - Function reference and examples
+- [Zama FHE Docs](https://docs.zama.ai/) - FHE technology details
+- [Gateway Callback Guide](https://docs.zama.ai/fhevm/guides/callback) - Callback pattern details
 
 ### Contributing
 We welcome contributions! Please see our contributing guidelines:
 1. Fork the repository
 2. Create a feature branch
 3. Write comprehensive tests
-4. Submit a pull request with detailed description
+4. Ensure security best practices
+5. Submit a pull request with detailed description
 
 ### Social Links
 - GitHub: [Repository](https://github.com/AndyCassin/ConfidentialPatentLicense)
@@ -658,6 +762,29 @@ We welcome contributions! Please see our contributing guidelines:
 
 ---
 
+## 🏆 What Makes This Platform Unique
+
+1. **Complete Privacy**: All sensitive data encrypted on-chain using FHE
+2. **Gateway Callback Architecture**: Innovative async pattern for efficiency
+3. **Refund Protection**: Automatic refunds prevent fund loss
+4. **Timeout Safety**: 7-day timeout prevents permanent locks
+5. **Gas Optimized**: Minimal on-chain FHE operations
+6. **Security Audited**: Comprehensive security comments throughout code
+7. **Well Documented**: Architecture and API docs included
+
+## 📊 Technical Specifications
+
+- **Decryption Timeout**: 7 days
+- **Max Patent Validity**: 20 years
+- **Max Bidding Duration**: 168 hours (1 week)
+- **Max Royalty Rate**: 10000 basis points (100%)
+- **Royalty Verification Tolerance**: 5% for rounding errors
+- **Reentrancy Protection**: Implemented on all critical functions
+
+---
+
 **Built with Zama FHE Technology | Deployed on Ethereum Sepolia | Powered by Hardhat**
 
 *Confidential Patent License Platform - Revolutionizing IP Licensing with Privacy-Preserving Blockchain Technology*
+
+*Enhanced with Gateway Callback Architecture, Refund Mechanisms, and Timeout Protection*
